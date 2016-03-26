@@ -1,0 +1,5 @@
+Revenu-qt usr/bin
+share/pixmaps/Revenu32.xpm usr/share/pixmaps
+share/pixmaps/Revenu80.xpm usr/share/pixmaps
+debian/Revenu-qt.desktop usr/share/applications
+debian/Revenu-qt.protocol usr/share/kde4/services/

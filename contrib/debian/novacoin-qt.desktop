@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Revenu
+Comment=Revenu P2P Cryptocurrency
+Comment[ru]=Revenu, P2P криптовалюта
+Comment[fr]=Revenu, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=Revenu, eşten eşe kriptografik sanal para birimi
+Exec=/usr/bin/Revenu-qt
+Terminal=false
+Type=Application
+Icon=/usr/share/pixmaps/Revenu80.xpm
+MimeType=x-scheme-handler/Revenu;
+Categories=Office;

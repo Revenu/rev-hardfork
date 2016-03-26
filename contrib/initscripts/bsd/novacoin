@@ -1,0 +1,68 @@
+#!/bin/sh
+
+# PROVIDE: Revenu
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+
+#
+# Add the following lines to /etc/rc.conf.local or /etc/rc.conf
+# to enable this service:
+#
+# Revenu_enable (bool): Set to NO by default. Set this variable to YES if you want to enable Revenu service.
+# Revenu_config (path): Set to /usr/local/etc/Revenu.conf by default.
+# Revenu_user:  The user account Revenu daemon runs as. It uses 'root' user by default.
+# Revenu_group: The group account Revenu daemon runs as. It uses 'wheel' group by default.
+# Revenu_datadir (str): Default to "/var/db/Revenu". Base data directory.
+
+. /etc/rc.subr
+
+name=Revenu
+rcvar=Revenu_enable
+
+: ${Revenu_enable:=NO}
+: ${Revenu_config=/usr/local/etc/Revenu.conf}
+: ${Revenu_datadir=/var/db/Revenu}
+: ${Revenu_user="root"}
+: ${Revenu_group="wheel"}
+
+required_files=${Revenu_config}
+command=/usr/local/bin/Revenud
+Revenu_chdir=${Revenu_datadir}
+pidfile="${Revenu_datadir}/Revenud.pid"
+stop_cmd=Revenu_stop
+command_args="-conf=${Revenu_config} -datadir=${Revenu_datadir} -daemon -pid=${pidfile}"
+start_precmd="${name}_prestart"
+
+Revenu_create_datadir()
+{
+	echo "Creating data directory"
+	eval mkdir -p ${Revenu_datadir}
+	[ $? -eq 0 ] && chown -R ${Revenu_user}:${Revenu_group} ${Revenu_datadir}
+}
+
+Revenu_prestart()
+{
+	if [ ! -d "${Revenu_datadir}/." ]; then
+		Revenu_create_datadir || return 1
+	fi
+}
+
+Revenu_requirepidfile()
+{
+	if [ ! "0`check_pidfile ${pidfile} ${command}`" -gt 1 ]; then
+		echo "${name} not running? (check $pidfile)."
+		exit 1
+	fi
+}
+
+Revenu_stop()
+{
+    Revenu_requirepidfile
+
+	echo "Stopping ${name}."
+	eval ${command} -conf=${Revenu_config} -datadir=${Revenu_datadir} stop
+	wait_for_pids ${rc_pid}
+}
+
+load_rc_config $name
+run_rc_command "$1"
